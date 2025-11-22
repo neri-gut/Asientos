@@ -2,147 +2,248 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador de Mesas - Boda</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuestra Boda - Busca tu lugar</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            600: '#e11d48', 
+                            800: '#9f1239',
+                            900: '#881337',
+                        }
+                    },
+                    fontFamily: {
+                        script: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Lato"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #fdfbf7;
-            color: #333;
+            background-color: #fff1f2; /* Rose 50 */
+            background-image: radial-gradient(#fecdd3 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         
+        /* Tarjeta de Asignación (Ticket) */
         .ticket-card {
-            background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
-            border: 2px solid #d4af37;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #fff 0%, #fff0f5 100%);
+            border: 1px solid #fecdd3;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        .ticket-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(90deg, #fda4af, #f43f5e);
+        }
+
+        /* Pestañas */
+        .tab-btn {
             transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
         }
-
-        .map-container img {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        /* Estilos para pestañas */
         .tab-active {
-            color: #ca8a04; /* yellow-700 */
-            border-bottom: 2px solid #ca8a04;
-            background-color: #fefce8; /* yellow-50 */
+            color: #e11d48; /* Rose 600 */
+            border-bottom-color: #e11d48;
+            background-color: rgba(255, 255, 255, 0.9);
         }
         .tab-inactive {
-            color: #6b7280; /* gray-500 */
-            border-bottom: 2px solid transparent;
+            color: #9ca3af;
+            background-color: rgba(255, 255, 255, 0.4);
         }
         .tab-inactive:hover {
-            color: #ca8a04;
-            background-color: #fafaf9;
+            color: #fb7185;
+        }
+
+        /* Mapa */
+        .map-container {
+            background: white;
+            border: 4px solid white;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        /* Scroll suave */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff1f2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fecdd3;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fda4af;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col font-sans text-gray-700">
 
-    <!-- Encabezado -->
-    <header class="bg-white shadow-sm py-4 border-b border-yellow-100">
+    <!-- Encabezado Romántico -->
+    <header class="bg-white shadow-sm py-4 sticky top-0 z-30 border-b border-rose-100">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-2xl md:text-3xl font-serif text-gray-800">Bienvenidos</h1>
-            <p class="text-sm text-gray-500 mt-1">Encuentra tu lugar en nuestra celebración</p>
+            <h1 class="text-4xl md:text-5xl font-script text-rose-600 mb-1">Nuestra Boda</h1>
+            <p class="text-xs md:text-sm text-rose-400 uppercase tracking-widest font-bold">Encuentra tu lugar</p>
         </div>
     </header>
 
-    <main class="flex-grow p-4 md:p-8">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <main class="flex-grow p-3 md:p-6">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            <!-- COLUMNA IZQUIERDA -->
-            <div class="lg:col-span-5 flex flex-col gap-4">
+            <!-- COLUMNA IZQUIERDA: Interacción -->
+            <div class="lg:col-span-5 flex flex-col h-full relative">
                 
                 <!-- Navegación de Pestañas -->
-                <div class="flex rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm">
-                    <button onclick="switchTab('search')" id="tabSearch" class="flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active">
-                        🔍 Buscador
+                <div class="flex rounded-t-xl overflow-hidden bg-white shadow-sm border-b border-gray-100 mb-4 sticky top-0 z-10">
+                    <button onclick="switchTab('search')" id="tabSearch" class="flex-1 py-4 text-xs md:text-sm font-bold uppercase tracking-wide tab-active">
+                        🔍 Buscar
                     </button>
-                    <button onclick="switchTab('list')" id="tabList" class="flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive">
-                        📋 Lista Completa
+                    <button onclick="switchTab('tables')" id="tabTables" class="flex-1 py-4 text-xs md:text-sm font-bold uppercase tracking-wide tab-inactive">
+                        🍽️ Por Mesa
+                    </button>
+                    <button onclick="switchTab('list')" id="tabList" class="flex-1 py-4 text-xs md:text-sm font-bold uppercase tracking-wide tab-inactive">
+                        📋 Lista A-Z
                     </button>
                 </div>
 
-                <!-- VISTA 1: Buscador -->
-                <div id="viewSearch" class="flex flex-col gap-6 transition-opacity duration-300">
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Escribe tu apellido:</label>
-                        <div class="relative">
-                            <input type="text" id="searchInput" placeholder="Ej. Perez, Familia..." autocomplete="off"
-                                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none pl-12 text-lg shadow-inner">
-                            <svg class="w-6 h-6 text-gray-400 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </div>
-                    </div>
+                <!-- CONTENEDOR DE VISTAS -->
+                <div class="relative min-h-[300px]">
                     
-                    <!-- Lista de resultados de búsqueda -->
-                    <div id="searchResultsArea" class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex-grow max-h-[400px] overflow-y-auto hidden">
-                        <div id="searchResultsList" class="divide-y divide-gray-100"></div>
-                    </div>
-                </div>
-
-                <!-- VISTA 2: Lista Completa -->
-                <div id="viewList" class="hidden flex flex-col gap-4 transition-opacity duration-300">
-                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 max-h-[600px] overflow-y-auto">
-                        <h3 class="text-center font-bold text-gray-400 text-xs uppercase tracking-wider mb-4 sticky top-0 bg-white py-2 border-b">
-                            Orden Alfabético (A-Z)
-                        </h3>
-                        <div id="fullListContainer" class="divide-y divide-gray-100">
-                            <!-- Se llena con JS -->
+                    <!-- VISTA 1: Buscador -->
+                    <div id="viewSearch" class="flex flex-col gap-4 animate-fade">
+                        <div class="bg-white p-6 rounded-2xl shadow-md border border-rose-50 transition-all duration-300" id="searchBoxContainer">
+                            <label class="block text-sm font-bold text-rose-800 mb-2 text-center">Escribe tu apellido o nombre</label>
+                            <div class="relative group">
+                                <input type="text" id="searchInput" placeholder="Ej. Perez..." autocomplete="off"
+                                    class="w-full p-4 border-2 border-rose-100 rounded-xl focus:ring-4 focus:ring-rose-100 focus:border-rose-400 outline-none pl-12 text-lg transition-all text-center placeholder-rose-200 text-rose-900">
+                                <div class="absolute left-4 top-4 text-rose-300">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </div>
+                                <!-- Botón borrar búsqueda -->
+                                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-4 top-4 text-gray-300 hover:text-rose-500">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- ÁREA DE TICKET (Compartida) -->
-                <div id="assignmentArea" class="hidden animate-fade-in-up">
-                    <div class="ticket-card p-6 rounded-xl text-center relative overflow-hidden">
-                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-yellow-100 rounded-full opacity-50 blur-xl"></div>
                         
-                        <div class="flex justify-between items-start">
-                            <button onclick="closeTicket()" class="text-gray-400 hover:text-gray-600 p-1">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                                <span class="text-xs ml-1">Volver</span>
-                            </button>
-                            <h2 class="text-gray-500 text-sm uppercase tracking-widest font-bold">Tu Lugar</h2>
-                            <div class="w-5"></div> <!-- Espaciador para centrar -->
-                        </div>
-
-                        <h3 id="guestNameDisplay" class="text-2xl md:text-3xl font-bold text-gray-900 mt-2 mb-4 font-serif">Familia Pérez</h3>
-                        
-                        <div class="my-4 border-t border-dashed border-yellow-300 w-full"></div>
-                        
-                        <div class="flex flex-col items-center justify-center gap-2">
-                            <span class="text-gray-600">Mesa asignada:</span>
-                            <span id="tableNumberDisplay" class="text-6xl font-bold text-yellow-600 drop-shadow-sm">4</span>
-                        </div>
-
-                        <div class="mt-6 p-3 bg-yellow-50 rounded-lg text-yellow-800 text-sm font-medium border border-yellow-200">
-                            📍 Ubica el número <span id="tableHint" class="font-bold">4</span> en el mapa 👉
+                        <!-- Resultados Búsqueda -->
+                        <div id="searchResultsArea" class="bg-white rounded-2xl shadow-lg border border-rose-50 overflow-hidden hidden max-h-[50vh] overflow-y-auto">
+                            <div id="searchResultsList" class="divide-y divide-rose-50"></div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- VISTA 2: Por Mesa -->
+                    <div id="viewTables" class="hidden animate-fade">
+                        <div class="bg-white rounded-2xl shadow-md border border-rose-50 overflow-hidden max-h-[70vh] overflow-y-auto p-2">
+                            <p class="text-center text-xs text-gray-400 py-2 uppercase tracking-wide">Desglose por mesa</p>
+                            <div id="tablesListContainer" class="grid grid-cols-1 gap-3">
+                                <!-- Se llena con JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISTA 3: Lista A-Z -->
+                    <div id="viewList" class="hidden animate-fade">
+                        <div class="bg-white rounded-2xl shadow-md border border-rose-50 overflow-hidden max-h-[70vh] overflow-y-auto">
+                            <div id="fullListContainer" class="divide-y divide-gray-100">
+                                <!-- Se llena con JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ÁREA DE TICKET (MODAL / OVERLAY) -->
+                    <!-- Inicialmente hidden. Se activa solo al seleccionar un resultado -->
+                    <div id="assignmentArea" class="hidden animate-fade fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 lg:absolute lg:bg-white/90 lg:backdrop-blur-none lg:items-start lg:pt-0">
+                        <div class="w-full max-w-md lg:max-w-full relative">
+                            
+                            <div class="ticket-card rounded-3xl p-6 md:p-8 text-center relative bg-white">
+                                <!-- Botón cerrar -->
+                                <button onclick="closeTicket()" class="absolute top-3 right-3 p-2 bg-rose-50 rounded-full hover:bg-rose-100 text-rose-400 transition-colors z-20">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </button>
+
+                                <div class="mb-4">
+                                    <span class="inline-block px-4 py-1 bg-gradient-to-r from-rose-100 to-rose-200 text-rose-700 rounded-full text-xs font-bold tracking-widest uppercase shadow-sm">¡Bienvenido!</span>
+                                </div>
+                                
+                                <h3 id="guestNameDisplay" class="text-2xl md:text-3xl font-bold text-gray-800 font-serif mb-2 leading-tight">Familia Pérez</h3>
+                                <p class="text-gray-400 text-sm mb-6 italic">Tu lugar está reservado</p>
+                                
+                                <div class="bg-white rounded-2xl p-6 border-2 border-rose-100 mb-6 shadow-inner relative overflow-hidden group">
+                                    <div class="absolute -right-6 -top-6 w-20 h-20 bg-rose-50 rounded-full z-0 group-hover:scale-150 transition-transform duration-700"></div>
+                                    <div class="relative z-10">
+                                        <p class="text-rose-400 text-xs uppercase font-bold mb-1 tracking-wider">Mesa Número</p>
+                                        <span id="tableNumberDisplay" class="text-8xl font-bold text-rose-500 drop-shadow-sm font-serif leading-none">4</span>
+                                    </div>
+                                </div>
+
+                                <div class="text-sm text-gray-600 bg-rose-50 p-4 rounded-xl border border-rose-100 shadow-sm flex items-center gap-3 text-left">
+                                    <div class="text-2xl">🗺️</div>
+                                    <div>
+                                        <p class="font-bold text-rose-800">Ubica tu mesa en el mapa</p>
+                                        <p class="text-xs text-gray-500">Busca el número <span id="tableHint" class="font-bold">4</span> en la imagen de la derecha (o abajo).</p>
+                                    </div>
+                                </div>
+                                
+                                <button onclick="closeTicket()" class="mt-6 w-full py-3 bg-white border border-rose-200 text-rose-500 rounded-xl font-bold hover:bg-rose-50 transition-colors lg:hidden">
+                                    Buscar a alguien más
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <!-- COLUMNA DERECHA: Mapa -->
-            <div class="lg:col-span-7">
-                <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 h-full">
-                    <h3 class="text-center font-bold text-gray-700 mb-4 border-b pb-2">Mapa del Salón</h3>
-                    <div class="map-container bg-gray-100 rounded-lg p-2">
-                        <img src="mapa.png" alt="Mapa de distribución" class="w-full h-auto object-contain"
-                             onerror="this.src='https://via.placeholder.com/800x600/f3f4f6/9ca3af?text=Carga+tu+imagen+mapa.png'">
+            <div class="lg:col-span-7 mt-6 lg:mt-0">
+                <div class="sticky top-24">
+                    <div class="map-container rounded-3xl overflow-hidden relative bg-white">
+                        <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full text-xs font-bold text-rose-500 shadow-sm z-10 border border-rose-100 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7"></path></svg>
+                            Mapa del Salón
+                        </div>
+                        <!-- IMAGEN: Asegúrate de que se llame 'mapa.png' -->
+                        <img src="mapa.png" alt="Mapa de distribución" class="w-full h-auto object-contain bg-rose-50/30"
+                             onerror="this.src='https://via.placeholder.com/800x1000/fff1f2/e11d48?text=Subir+mapa.png'">
                     </div>
-                    <p class="text-center text-xs text-gray-400 mt-3">
-                        Usa tus dedos para ampliar el mapa.
+                    <p class="text-center text-xs text-rose-300 mt-3 font-medium animate-pulse">
+                        👆 Puedes hacer zoom en la imagen
                     </p>
                 </div>
             </div>
         </div>
     </main>
+
+    <footer class="text-center py-8 mt-8 text-rose-300 text-sm font-script text-2xl">
+        <p>Gracias por celebrar con nosotros</p>
+    </footer>
 
     <script>
         /* --- DATOS --- */
@@ -212,57 +313,52 @@
             { name: "Fam. Loria Cupul", count: 3, table: 19 }
         ];
 
-        // Ordenar datos globalmente para la lista
         guestData.sort((a, b) => a.name.localeCompare(b.name));
 
-        /* --- ELEMENTOS DOM --- */
-        const viewSearch = document.getElementById('viewSearch');
-        const viewList = document.getElementById('viewList');
-        const tabSearch = document.getElementById('tabSearch');
-        const tabList = document.getElementById('tabList');
-        const searchInput = document.getElementById('searchInput');
-        const searchResultsArea = document.getElementById('searchResultsArea');
-        const searchResultsList = document.getElementById('searchResultsList');
+        /* --- DOM --- */
+        const views = {
+            search: document.getElementById('viewSearch'),
+            tables: document.getElementById('viewTables'),
+            list: document.getElementById('viewList')
+        };
+        const tabs = {
+            search: document.getElementById('tabSearch'),
+            tables: document.getElementById('tabTables'),
+            list: document.getElementById('tabList')
+        };
         const assignmentArea = document.getElementById('assignmentArea');
-        const fullListContainer = document.getElementById('fullListContainer');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
         
-        // Elementos del Ticket
-        const guestNameDisplay = document.getElementById('guestNameDisplay');
-        const tableNumberDisplay = document.getElementById('tableNumberDisplay');
-        const tableHint = document.getElementById('tableHint');
-
-        let currentTab = 'search'; // 'search' | 'list'
+        let currentTab = 'search';
 
         /* --- FUNCIONES --- */
 
-        function switchTab(tab) {
-            currentTab = tab;
-            assignmentArea.classList.add('hidden'); // Ocultar ticket al cambiar
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Resetear todo
+            Object.values(views).forEach(el => el.classList.add('hidden'));
+            Object.values(tabs).forEach(el => {
+                el.classList.remove('tab-active');
+                el.classList.add('tab-inactive');
+            });
 
-            if(tab === 'search') {
-                // Estilos Tabs
-                tabSearch.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active";
-                tabList.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive";
-                
-                // Vistas
-                viewSearch.classList.remove('hidden');
-                viewList.classList.add('hidden');
-                
-                // Focus
+            // Activar actual
+            views[tabName].classList.remove('hidden');
+            tabs[tabName].classList.add('tab-active');
+            tabs[tabName].classList.remove('tab-inactive');
+
+            // Cerrar el ticket si cambiamos de pestaña para evitar confusión
+            closeTicket();
+
+            // Lógica específica
+            if(tabName === 'search') {
                 searchInput.focus();
-            } else {
-                // Estilos Tabs
-                tabSearch.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive";
-                tabList.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active";
-                
-                // Vistas
-                viewSearch.classList.add('hidden');
-                viewList.classList.remove('hidden');
-                
-                // Cargar lista si está vacía
-                if(fullListContainer.children.length === 0) {
-                    renderFullList();
-                }
+            } else if(tabName === 'list') {
+                renderFullList();
+            } else if(tabName === 'tables') {
+                renderTableList();
             }
         }
 
@@ -270,59 +366,46 @@
             return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
-        // Mostrar Ticket
         function selectGuest(guest) {
-            // Ocultar las vistas principales temporalmente
-            viewSearch.classList.add('hidden');
-            viewList.classList.add('hidden');
-
-            // Llenar datos
-            guestNameDisplay.textContent = guest.name;
-            tableNumberDisplay.textContent = guest.table;
-            tableHint.textContent = guest.table;
+            // Llenar datos del ticket
+            document.getElementById('guestNameDisplay').textContent = guest.name;
+            document.getElementById('tableNumberDisplay').textContent = guest.table;
+            document.getElementById('tableHint').textContent = guest.table;
             
-            // Mostrar ticket
+            // Mostrar ticket como Overlay
             assignmentArea.classList.remove('hidden');
+            assignmentArea.classList.add('flex');
+            
+            // Opcional: Limpiar búsqueda para que al volver esté limpio
+            // searchInput.value = '';
+            // renderSearchResults('');
         }
 
-        // Cerrar Ticket (Volver atrás)
         function closeTicket() {
             assignmentArea.classList.add('hidden');
-            if (currentTab === 'search') {
-                viewSearch.classList.remove('hidden');
-                searchInput.focus();
-            } else {
-                viewList.classList.remove('hidden');
-            }
+            assignmentArea.classList.remove('flex');
         }
 
-        // Renderizar lista completa
-        function renderFullList() {
-            fullListContainer.innerHTML = '';
-            guestData.forEach(guest => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full text-left p-3 hover:bg-yellow-50 transition-colors flex justify-between items-center group';
-                btn.innerHTML = `
-                    <div>
-                        <span class="font-medium text-gray-700 group-hover:text-yellow-800">${guest.name}</span>
-                        <span class="text-xs text-gray-400 block">${guest.count} pax</span>
-                    </div>
-                    <div class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold group-hover:bg-yellow-200">
-                        Mesa ${guest.table}
-                    </div>
-                `;
-                btn.onclick = () => selectGuest(guest);
-                fullListContainer.appendChild(btn);
-            });
+        function clearSearch() {
+            searchInput.value = '';
+            renderSearchResults('');
+            searchInput.focus();
         }
 
-        // Renderizar resultados de búsqueda
+        // 1. Buscador
         function renderSearchResults(term) {
-            searchResultsList.innerHTML = '';
+            const list = document.getElementById('searchResultsList');
+            const area = document.getElementById('searchResultsArea');
+            list.innerHTML = '';
             const normTerm = normalizeText(term);
 
+            // Botón de limpiar
+            if(term.length > 0) clearSearchBtn.classList.remove('hidden');
+            else clearSearchBtn.classList.add('hidden');
+
+            // Si no hay texto, ocultar resultados y salir (Ticket sigue oculto por defecto)
             if (normTerm.length === 0) {
-                searchResultsArea.classList.add('hidden');
+                area.classList.add('hidden');
                 return;
             }
 
@@ -332,38 +415,97 @@
             );
 
             if (filtered.length > 0) {
-                searchResultsArea.classList.remove('hidden');
+                area.classList.remove('hidden');
                 filtered.forEach(guest => {
                     const btn = document.createElement('button');
-                    btn.className = 'w-full text-left p-4 hover:bg-yellow-50 transition-colors flex justify-between items-center group focus:outline-none focus:bg-yellow-50';
+                    btn.className = 'w-full text-left p-4 hover:bg-rose-50 transition-colors flex justify-between items-center group border-b border-rose-50 last:border-0';
                     btn.innerHTML = `
                         <div>
-                            <span class="font-semibold text-gray-800 group-hover:text-yellow-800">${guest.name}</span>
-                            <span class="text-xs text-gray-500 block ml-1">${guest.count} personas</span>
+                            <span class="font-bold text-gray-800 group-hover:text-rose-600 block text-lg">${guest.name}</span>
+                            <span class="text-xs text-gray-400">${guest.count} personas</span>
                         </div>
-                        <span class="text-gray-400 text-sm group-hover:text-yellow-600">Ver &rarr;</span>
+                        <div class="bg-white border border-rose-100 text-rose-400 px-3 py-1 rounded-full text-xs font-bold group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                            Ver Mesa &rarr;
+                        </div>
                     `;
                     btn.onclick = () => selectGuest(guest);
-                    searchResultsList.appendChild(btn);
+                    list.appendChild(btn);
                 });
             } else {
-                searchResultsArea.classList.remove('hidden');
-                searchResultsList.innerHTML = `
-                    <div class="p-6 text-center">
-                        <p class="text-gray-400 mb-2">No encontramos "${term}"</p>
-                        <button onclick="switchTab('list')" class="text-yellow-600 font-bold underline text-sm">
-                            Ver lista completa
-                        </button>
+                area.classList.remove('hidden');
+                list.innerHTML = `
+                    <div class="p-8 text-center text-gray-400">
+                        <p class="mb-2">No encontramos "${term}"</p>
+                        <p class="text-xs text-gray-300 mb-4">Intenta buscar solo por apellido o revisa la lista completa.</p>
+                        <button onclick="switchTab('list')" class="text-rose-500 font-bold underline text-sm">Ver lista completa</button>
                     </div>
                 `;
             }
         }
 
-        // Event Listeners
-        searchInput.addEventListener('input', (e) => {
-            renderSearchResults(e.target.value);
-        });
+        // 2. Lista por Mesas
+        function renderTableList() {
+            const container = document.getElementById('tablesListContainer');
+            if(container.children.length > 0) return;
+
+            const tables = {};
+            guestData.forEach(g => {
+                if(!tables[g.table]) tables[g.table] = [];
+                tables[g.table].push(g);
+            });
+
+            const tableNumbers = Object.keys(tables).sort((a,b) => parseInt(a) - parseInt(b));
+
+            tableNumbers.forEach(num => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-rose-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow';
+                
+                let guestsHTML = '';
+                tables[num].forEach(g => {
+                    guestsHTML += `<li class="text-sm text-gray-600 py-2 border-b border-gray-50 last:border-0 flex justify-between items-center">
+                        <span>${g.name}</span>
+                        <span class="text-xs text-rose-300 bg-rose-50 px-2 py-0.5 rounded-full">${g.count}</span>
+                    </li>`;
+                });
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 mb-3 border-b border-rose-50 pb-2">
+                        <div class="bg-rose-500 text-white w-8 h-8 flex items-center justify-center rounded-full font-bold font-serif shadow-sm text-lg pt-1">
+                            ${num}
+                        </div>
+                        <span class="font-bold text-gray-700 uppercase text-xs tracking-wider">Mesa ${num}</span>
+                    </div>
+                    <ul class="pl-2">
+                        ${guestsHTML}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 3. Lista Completa A-Z
+        function renderFullList() {
+            const container = document.getElementById('fullListContainer');
+            if(container.children.length > 0) return;
+
+            guestData.forEach(guest => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-4 hover:bg-rose-50 transition-colors flex justify-between items-center group border-b border-gray-50 last:border-0';
+                btn.innerHTML = `
+                    <span class="font-medium text-gray-600 group-hover:text-rose-600 text-sm">${guest.name}</span>
+                    <div class="flex items-center gap-2">
+                        <span class="bg-gray-100 text-gray-500 px-2 py-1 rounded text-xs font-bold group-hover:bg-rose-100 group-hover:text-rose-600 transition-colors">
+                            Mesa ${guest.table}
+                        </span>
+                    </div>
+                `;
+                btn.onclick = () => selectGuest(guest);
+                container.appendChild(btn);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => renderSearchResults(e.target.value));
 
     </script>
 </body>
-</html>
+</html>S
