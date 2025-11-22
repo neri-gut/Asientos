@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador de Mesas - Boda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #fdfbf7;
+            color: #333;
+        }
+        
+        .ticket-card {
+            background: linear-gradient(135deg, #fff 0%, #fffbf0 100%);
+            border: 2px solid #d4af37;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos para pestañas */
+        .tab-active {
+            color: #ca8a04; /* yellow-700 */
+            border-bottom: 2px solid #ca8a04;
+            background-color: #fefce8; /* yellow-50 */
+        }
+        .tab-inactive {
+            color: #6b7280; /* gray-500 */
+            border-bottom: 2px solid transparent;
+        }
+        .tab-inactive:hover {
+            color: #ca8a04;
+            background-color: #fafaf9;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Encabezado -->
+    <header class="bg-white shadow-sm py-4 border-b border-yellow-100">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-2xl md:text-3xl font-serif text-gray-800">Bienvenidos</h1>
+            <p class="text-sm text-gray-500 mt-1">Encuentra tu lugar en nuestra celebración</p>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-8">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="lg:col-span-5 flex flex-col gap-4">
+                
+                <!-- Navegación de Pestañas -->
+                <div class="flex rounded-lg overflow-hidden border border-gray-200 bg-white shadow-sm">
+                    <button onclick="switchTab('search')" id="tabSearch" class="flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active">
+                        🔍 Buscador
+                    </button>
+                    <button onclick="switchTab('list')" id="tabList" class="flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive">
+                        📋 Lista Completa
+                    </button>
+                </div>
+
+                <!-- VISTA 1: Buscador -->
+                <div id="viewSearch" class="flex flex-col gap-6 transition-opacity duration-300">
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Escribe tu apellido:</label>
+                        <div class="relative">
+                            <input type="text" id="searchInput" placeholder="Ej. Perez, Familia..." autocomplete="off"
+                                class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 outline-none pl-12 text-lg shadow-inner">
+                            <svg class="w-6 h-6 text-gray-400 absolute left-4 top-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Lista de resultados de búsqueda -->
+                    <div id="searchResultsArea" class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex-grow max-h-[400px] overflow-y-auto hidden">
+                        <div id="searchResultsList" class="divide-y divide-gray-100"></div>
+                    </div>
+                </div>
+
+                <!-- VISTA 2: Lista Completa -->
+                <div id="viewList" class="hidden flex flex-col gap-4 transition-opacity duration-300">
+                    <div class="bg-white p-4 rounded-xl shadow-md border border-gray-100 max-h-[600px] overflow-y-auto">
+                        <h3 class="text-center font-bold text-gray-400 text-xs uppercase tracking-wider mb-4 sticky top-0 bg-white py-2 border-b">
+                            Orden Alfabético (A-Z)
+                        </h3>
+                        <div id="fullListContainer" class="divide-y divide-gray-100">
+                            <!-- Se llena con JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ÁREA DE TICKET (Compartida) -->
+                <div id="assignmentArea" class="hidden animate-fade-in-up">
+                    <div class="ticket-card p-6 rounded-xl text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-yellow-100 rounded-full opacity-50 blur-xl"></div>
+                        
+                        <div class="flex justify-between items-start">
+                            <button onclick="closeTicket()" class="text-gray-400 hover:text-gray-600 p-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                <span class="text-xs ml-1">Volver</span>
+                            </button>
+                            <h2 class="text-gray-500 text-sm uppercase tracking-widest font-bold">Tu Lugar</h2>
+                            <div class="w-5"></div> <!-- Espaciador para centrar -->
+                        </div>
+
+                        <h3 id="guestNameDisplay" class="text-2xl md:text-3xl font-bold text-gray-900 mt-2 mb-4 font-serif">Familia Pérez</h3>
+                        
+                        <div class="my-4 border-t border-dashed border-yellow-300 w-full"></div>
+                        
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <span class="text-gray-600">Mesa asignada:</span>
+                            <span id="tableNumberDisplay" class="text-6xl font-bold text-yellow-600 drop-shadow-sm">4</span>
+                        </div>
+
+                        <div class="mt-6 p-3 bg-yellow-50 rounded-lg text-yellow-800 text-sm font-medium border border-yellow-200">
+                            📍 Ubica el número <span id="tableHint" class="font-bold">4</span> en el mapa 👉
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLUMNA DERECHA: Mapa -->
+            <div class="lg:col-span-7">
+                <div class="bg-white p-4 rounded-xl shadow-lg border border-gray-200 h-full">
+                    <h3 class="text-center font-bold text-gray-700 mb-4 border-b pb-2">Mapa del Salón</h3>
+                    <div class="map-container bg-gray-100 rounded-lg p-2">
+                        <img src="mapa.png" alt="Mapa de distribución" class="w-full h-auto object-contain"
+                             onerror="this.src='https://via.placeholder.com/800x600/f3f4f6/9ca3af?text=Carga+tu+imagen+mapa.png'">
+                    </div>
+                    <p class="text-center text-xs text-gray-400 mt-3">
+                        Usa tus dedos para ampliar el mapa.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* --- DATOS --- */
+        const guestData = [
+            { name: "Fam. Be", count: 6, table: 1 },
+            { name: "Fam. Chimal Ake", count: 2, table: 1 },
+            { name: "Fam. Dzib", count: 3, table: 2 },
+            { name: "Fam. Espadas", count: 3, table: 2 },
+            { name: "Mario Be", count: 1, table: 2 },
+            { name: "Jared Be", count: 1, table: 2 },
+            { name: "Darvin Cel", count: 1, table: 2 },
+            { name: "Héctor Cob", count: 1, table: 2 },
+            { name: "Fam. Noh", count: 4, table: 3 },
+            { name: "Fam. Sánchez", count: 3, table: 3 },
+            { name: "Fam. Petul", count: 3, table: 3 },
+            { name: "Fam. Pérez", count: 3, table: 4 },
+            { name: "Fam. Baz", count: 2, table: 4 },
+            { name: "Axel Gabriel Pool", count: 1, table: 4 },
+            { name: "Erik Aban", count: 1, table: 4 },
+            { name: "Felipe Lugo", count: 1, table: 4 },
+            { name: "Oscar Tafoya", count: 1, table: 4 },
+            { name: "Fam. Poot", count: 6, table: 5 },
+            { name: "Fam. Kituc", count: 4, table: 5 },
+            { name: "Fam. Soberanis Pinto", count: 5, table: 6 },
+            { name: "Fam. Roger Camelo", count: 2, table: 6 },
+            { name: "Fam. Ampi Camelo", count: 2, table: 6 },
+            { name: "Fam. Yam", count: 4, table: 7 },
+            { name: "Fam. Cammal", count: 5, table: 7 },
+            { name: "Hermelinda", count: 1, table: 7 },
+            { name: "Fam. Miss", count: 4, table: 8 },
+            { name: "Fam. Moguel", count: 3, table: 8 },
+            { name: "Leydi Tec", count: 3, table: 8 },
+            { name: "Fam. Domingo Soberanis", count: 3, table: 9 },
+            { name: "Fam. Carlos Soberanis", count: 7, table: 9 },
+            { name: "Fam. Koyoc Cupul", count: 3, table: 10 },
+            { name: "Fam. Mex Koyoc", count: 3, table: 10 },
+            { name: "Fam. Cupul Dzip", count: 4, table: 10 },
+            { name: "Fam. Soberanis López", count: 2, table: 11 },
+            { name: "Fam. Víctor Soberanis", count: 4, table: 11 },
+            { name: "Fam. Pastrana", count: 2, table: 11 },
+            { name: "Fam. Cedeño", count: 2, table: 11 },
+            { name: "Fam. Cammal Cupul", count: 4, table: 13 },
+            { name: "Fam. Cupul Cahuich", count: 3, table: 13 },
+            { name: "Fam. Bacab Ake", count: 2, table: 13 },
+            { name: "Fam. Antele", count: 3, table: 13 },
+            { name: "Abuelita Carmen", count: 2, table: 13 },
+            { name: "Fam. Ramírez", count: 4, table: 13 },
+            { name: "Dayne Domínguez", count: 1, table: 13 },
+            { name: "Fam. Soberanis", count: 4, table: 14 },
+            { name: "Fam. Monforte Mejía", count: 4, table: 14 },
+            { name: "Fam. Mejía Camelo", count: 2, table: 14 },
+            { name: "Fam. Polanco Camelo", count: 11, table: 15 },
+            { name: "Fam. Duran", count: 6, table: 16 },
+            { name: "Clarita Quintal", count: 1, table: 16 },
+            { name: "Tamara Gutiérrez", count: 1, table: 16 },
+            { name: "Fam. Moreno (Viajante)", count: 2, table: 16 },
+            { name: "Fam. Pérez Covarrubias", count: 2, table: 17 },
+            { name: "Dalia Cruz", count: 2, table: 17 },
+            { name: "Reina Ruiz", count: 1, table: 17 },
+            { name: "Jade", count: 1, table: 17 },
+            { name: "Gutiérrez", count: 3, table: 17 },
+            { name: "Fam. Huchim Camelo", count: 2, table: 18 },
+            { name: "Fam. Hoil Camelo", count: 5, table: 18 },
+            { name: "Fam. Camelo", count: 3, table: 18 },
+            { name: "Fam. Cupul Camelo", count: 4, table: 19 },
+            { name: "Fam. Lugo Cupul", count: 3, table: 19 },
+            { name: "Fam. Loria Cupul", count: 3, table: 19 }
+        ];
+
+        // Ordenar datos globalmente para la lista
+        guestData.sort((a, b) => a.name.localeCompare(b.name));
+
+        /* --- ELEMENTOS DOM --- */
+        const viewSearch = document.getElementById('viewSearch');
+        const viewList = document.getElementById('viewList');
+        const tabSearch = document.getElementById('tabSearch');
+        const tabList = document.getElementById('tabList');
+        const searchInput = document.getElementById('searchInput');
+        const searchResultsArea = document.getElementById('searchResultsArea');
+        const searchResultsList = document.getElementById('searchResultsList');
+        const assignmentArea = document.getElementById('assignmentArea');
+        const fullListContainer = document.getElementById('fullListContainer');
+        
+        // Elementos del Ticket
+        const guestNameDisplay = document.getElementById('guestNameDisplay');
+        const tableNumberDisplay = document.getElementById('tableNumberDisplay');
+        const tableHint = document.getElementById('tableHint');
+
+        let currentTab = 'search'; // 'search' | 'list'
+
+        /* --- FUNCIONES --- */
+
+        function switchTab(tab) {
+            currentTab = tab;
+            assignmentArea.classList.add('hidden'); // Ocultar ticket al cambiar
+
+            if(tab === 'search') {
+                // Estilos Tabs
+                tabSearch.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active";
+                tabList.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive";
+                
+                // Vistas
+                viewSearch.classList.remove('hidden');
+                viewList.classList.add('hidden');
+                
+                // Focus
+                searchInput.focus();
+            } else {
+                // Estilos Tabs
+                tabSearch.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-inactive";
+                tabList.className = "flex-1 py-3 text-sm font-bold uppercase tracking-wide transition-colors tab-active";
+                
+                // Vistas
+                viewSearch.classList.add('hidden');
+                viewList.classList.remove('hidden');
+                
+                // Cargar lista si está vacía
+                if(fullListContainer.children.length === 0) {
+                    renderFullList();
+                }
+            }
+        }
+
+        function normalizeText(text) {
+            return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        }
+
+        // Mostrar Ticket
+        function selectGuest(guest) {
+            // Ocultar las vistas principales temporalmente
+            viewSearch.classList.add('hidden');
+            viewList.classList.add('hidden');
+
+            // Llenar datos
+            guestNameDisplay.textContent = guest.name;
+            tableNumberDisplay.textContent = guest.table;
+            tableHint.textContent = guest.table;
+            
+            // Mostrar ticket
+            assignmentArea.classList.remove('hidden');
+        }
+
+        // Cerrar Ticket (Volver atrás)
+        function closeTicket() {
+            assignmentArea.classList.add('hidden');
+            if (currentTab === 'search') {
+                viewSearch.classList.remove('hidden');
+                searchInput.focus();
+            } else {
+                viewList.classList.remove('hidden');
+            }
+        }
+
+        // Renderizar lista completa
+        function renderFullList() {
+            fullListContainer.innerHTML = '';
+            guestData.forEach(guest => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-3 hover:bg-yellow-50 transition-colors flex justify-between items-center group';
+                btn.innerHTML = `
+                    <div>
+                        <span class="font-medium text-gray-700 group-hover:text-yellow-800">${guest.name}</span>
+                        <span class="text-xs text-gray-400 block">${guest.count} pax</span>
+                    </div>
+                    <div class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold group-hover:bg-yellow-200">
+                        Mesa ${guest.table}
+                    </div>
+                `;
+                btn.onclick = () => selectGuest(guest);
+                fullListContainer.appendChild(btn);
+            });
+        }
+
+        // Renderizar resultados de búsqueda
+        function renderSearchResults(term) {
+            searchResultsList.innerHTML = '';
+            const normTerm = normalizeText(term);
+
+            if (normTerm.length === 0) {
+                searchResultsArea.classList.add('hidden');
+                return;
+            }
+
+            const filtered = guestData.filter(guest => 
+                normalizeText(guest.name).includes(normTerm) ||
+                guest.table.toString() === normTerm
+            );
+
+            if (filtered.length > 0) {
+                searchResultsArea.classList.remove('hidden');
+                filtered.forEach(guest => {
+                    const btn = document.createElement('button');
+                    btn.className = 'w-full text-left p-4 hover:bg-yellow-50 transition-colors flex justify-between items-center group focus:outline-none focus:bg-yellow-50';
+                    btn.innerHTML = `
+                        <div>
+                            <span class="font-semibold text-gray-800 group-hover:text-yellow-800">${guest.name}</span>
+                            <span class="text-xs text-gray-500 block ml-1">${guest.count} personas</span>
+                        </div>
+                        <span class="text-gray-400 text-sm group-hover:text-yellow-600">Ver &rarr;</span>
+                    `;
+                    btn.onclick = () => selectGuest(guest);
+                    searchResultsList.appendChild(btn);
+                });
+            } else {
+                searchResultsArea.classList.remove('hidden');
+                searchResultsList.innerHTML = `
+                    <div class="p-6 text-center">
+                        <p class="text-gray-400 mb-2">No encontramos "${term}"</p>
+                        <button onclick="switchTab('list')" class="text-yellow-600 font-bold underline text-sm">
+                            Ver lista completa
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', (e) => {
+            renderSearchResults(e.target.value);
+        });
+
+    </script>
+</body>
+</html>
